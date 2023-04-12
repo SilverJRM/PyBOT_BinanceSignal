@@ -33,6 +33,23 @@ def get_file_dtls(file_path, sheet_name):
 
     return out_obj
 
+def validate_allocation(data):
+    allocation = data['allocation']['percent']
+    conservative = data['conservative_allocation']['percent']
+    small_spec = data['small_spec_allocation']['percent']
+    experimental = data['experimental_allocation']['percent']
+    
+    invalid_allocations = []
+    for alloc, name in [(allocation, 'allocation'), (conservative, 'conservative_allocation'), (small_spec, 'small_spec_allocation'), (experimental, 'experimental_allocation')]:
+        if round(sum(alloc), 3) != 1.0:
+            print(f"{name} has total allocations of {round(sum(alloc), 3)}")
+            invalid_allocations.append(name)
+
+    
+    if invalid_allocations:
+        raise ValueError(f"Total percent in {invalid_allocations} is not equal to 100%.")
+
+
 def copy_sheet_to_new_tab(file_path, sheet_name, new_sheet_name):
     # Load the document and get the sheet to copy
     doc = ezodf.opendoc(file_path)
@@ -199,7 +216,7 @@ def generate_trade_summary(trades):
     return response
 
 
-def perform_trade_market(trade_dict):
+def perform_trade_market(trade_dict, test):
     # Separate the trades into sell and buy
     sell_trades = []
     buy_trades = []
@@ -234,9 +251,9 @@ def perform_trade_market(trade_dict):
         if asset != 'USDT' and asset != 'BUSD':
             try: 
                 if sell == 'amt':
-                    sell_amount = ba.market_order_amt(symbol, "sell", quantity)
+                    sell_amount = ba.market_order_amt(symbol, "sell", quantity, test)
                 else: 
-                    sell_amount = ba.market_order_qty(symbol, "sell", quantity)
+                    sell_amount = ba.market_order_qty(symbol, "sell", quantity, test)
                 total_sell_amount += sell_amount
                 print(f"Sold {asset} for {sell_amount} USDT")
             except ValueError:
@@ -262,9 +279,9 @@ def perform_trade_market(trade_dict):
             if asset != 'USDT' and asset != 'BUSD':  
                 try:          
                     if buy == 'amt':
-                        buy_amt = ba.market_order_amt(symbol, "buy", quantity)
+                        buy_amt = ba.market_order_amt(symbol, "buy", quantity, test)
                     else: 
-                        buy_amt = ba.market_order_qty(symbol, "buy", quantity)
+                        buy_amt = ba.market_order_qty(symbol, "buy", quantity, test)
                     buy_budget -= buy_amt
                     print(f"Bought {asset} for {buy_amt} USDT")
                 except ValueError:
@@ -292,9 +309,9 @@ def perform_trade_market(trade_dict):
         # print(f"buying {symbol} @qty: {quantity}")
             try:
                 if buy == 'amt':
-                    buy_amt = ba.market_order_amt(symbol, "buy", quantity)
+                    buy_amt = ba.market_order_amt(symbol, "buy", quantity, test)
                 else: 
-                    buy_amt = ba.market_order_qty(symbol, "buy", quantity)
+                    buy_amt = ba.market_order_qty(symbol, "buy", quantity, test)
                 buy_budget -= buy_amt
                 print(f"Bought {last_asset} for {buy_amt} USDT") 
             except ValueError:
@@ -321,9 +338,9 @@ def perform_trade_market(trade_dict):
             # print(f"buying {symbol} @qty: {quantity}")
             try:
                 if buy == 'amt':
-                    buy_amt = ba.market_order_amt(symbol, "buy", quantity)
+                    buy_amt = ba.market_order_amt(symbol, "buy", quantity, test)
                 else: 
-                    buy_amt = ba.market_order_qty(symbol, "buy", quantity)
+                    buy_amt = ba.market_order_qty(symbol, "buy", quantity, test)
                 print(f"Bought {asset} for {buy_amt} USDT") 
             except ValueError:
                 print(f"Error trading {asset}")   

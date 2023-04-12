@@ -8,17 +8,27 @@ import json
 
 # Load variables from .env file
 load_dotenv()
-API_KEY = os.getenv("TEST_API_KEY")
-SECRET_KEY = os.getenv("TEST_SECRET_KEY")
-FILE_PATH = os.getenv("TEST_FILE_PATH")
 SHEET_NAME = os.getenv("SHEET_NAME")
 
-# Replace YOUR_API_KEY and YOUR_SECRET_KEY with your actual API keys
-client = Client(api_key=API_KEY, api_secret=SECRET_KEY, testnet=True)
+def get_client(test):
+    if test == "y":
+        API_KEY = os.getenv("TEST_API_KEY")
+        SECRET_KEY = os.getenv("TEST_SECRET_KEY")
+        FILE_PATH = os.getenv("TEST_FILE_PATH")
+    else:
+        API_KEY = os.getenv("API_KEY")
+        SECRET_KEY = os.getenv("SECRET_KEY")
+        FILE_PATH = os.getenv("FILE_PATH")   
 
-def get_asset_balance(input_obj):
+    # Replace YOUR_API_KEY and YOUR_SECRET_KEY with your actual API keys
+    client = Client(api_key=API_KEY, api_secret=SECRET_KEY, testnet=True)   
+    return client  
+
+def get_asset_balance(input_obj, test):
     # Coins to get balances for
     coins = input_obj['curr_holdings']['asset']
+    # Generate a binance client
+    client = get_client(test)
 
     # Get USD prices for each coin
     prices = client.get_all_tickers()
@@ -59,83 +69,10 @@ def get_asset_balance(input_obj):
 
     return input_obj
 
-
-
-def perform_trade_margin(trade_dict):
-    # Separate the trades into sell and buy
-    sell_trades = []
-    buy_trades = []
-    for asset, trade in trade_dict.items():
-        if trade['trade'] == 'sell':
-            sell_trades.append(asset)
-        elif trade['trade'] == 'buy':
-            buy_trades.append(asset)
-        else:
-            raise ValueError('Invalid trade type')
-
-    # Perform sell trades
-    total_sell_amount = 0
-    for asset in sell_trades:
-        # Convert asset to USDT
-        order = client.create_margin_order(
-            symbol=f"{asset}USDT",
-            side=SIDE_SELL,
-            type=ORDER_TYPE_MARKET,
-            quantity=client.get_asset_balance(asset)['free']
-        )
-        sell_amount = float(order['cummulativeQuoteQty'])
-        total_sell_amount += sell_amount
-        print(f"Sold {asset} for {sell_amount} USDT")
-
-    # Perform buy trades
-    if len(buy_trades) >= 2:
-        buy_budget = total_sell_amount
-        for asset in buy_trades[:-1]:
-            # Convert USDT to asset
-            price = client.get_symbol_ticker(symbol=f"{asset}USDT")['price']
-            quantity = buy_budget / float(price)
-            order = client.create_margin_order(
-                symbol=f"{asset}USDT",
-                side=SIDE_BUY,
-                type=ORDER_TYPE_MARKET,
-                quantity=quantity
-            )
-            buy_amount = float(order['cummulativeQuoteQty'])
-            print(f"Bought {quantity} {asset} for {buy_amount} USDT at {price} USDT/{asset}")
-            buy_budget -= buy_amount
-
-        # Convert remaining USDT to last asset
-        usdt_balance = buy_budget
-        last_asset = buy_trades[-1]
-        price = client.get_symbol_ticker(symbol=f"{last_asset}USDT")['price']
-        quantity = usdt_balance / float(price)
-        order = client.create_margin_order(
-            symbol=f"{last_asset}USDT",
-            side=SIDE_BUY,
-            type=ORDER_TYPE_MARKET,
-            quantity=quantity
-        )
-        print(f"Converted remaining {usdt_balance} USDT to {quantity} {last_asset} at {price} USDT/{last_asset}")
-
-    elif len(buy_trades) == 1:
-        usdt_balance = total_sell_amount
-        asset = buy_trades[0]
-        price = client.get_symbol_ticker(symbol=f"{asset}USDT")['price']
-        quantity = usdt_balance / float(price)
-        order = client.create_margin_order(
-            symbol=f"{asset}USDT",
-            side=SIDE_BUY,
-            type=ORDER_TYPE_MARKET,
-            quantity=quantity
-        )
-        buy_amount = float(order['cummulativeQuoteQty'])
-        print(f"Bought {quantity} {asset} for {buy_amount} USDT at {price} USDT/{asset}")
-
-    else:
-        print("No buy trades to perform")
-
-def market_order_amt(symbol, side, amount):
+def market_order_amt(symbol, side, amount, test):
     # print(f"tradepair: {symbol}")
+    # Generate a binance client
+    client = get_client(test)
 
     symbol_info = client.get_symbol_info(symbol=symbol)
     # symbol_info_json = json.dumps(symbol_info, indent=2)
@@ -171,7 +108,7 @@ def market_order_amt(symbol, side, amount):
         if float(amount) > float(min_notional):
             if maxprice < amount:
                 remaining_amount = amount
-                while remaining_amount > minprice:
+                while remaining_amount > min_notional:
                     ticker = client.get_symbol_ticker(symbol=symbol)
                     price = float(ticker['price'])
                     # print(f"checks: {price} - {max_qty_mkt}")
@@ -180,19 +117,19 @@ def market_order_amt(symbol, side, amount):
                         trade_amt = round(float(remaining_amount),precision)
                     if side == "sell":
                         # print(f"selling: {symbol} - {trade_amt}")
-                        trade_amt = market_order_amt_sell(symbol, trade_amt)
+                        trade_amt = market_order_amt_sell(symbol, trade_amt, test)
                         total_trade += trade_amt
                         remaining_amount -= trade_amt
                     else:
                         # print(f"buying: {symbol} - {trade_amt}")
-                        trade_amt = market_order_amt_buy(symbol, trade_amt)
+                        trade_amt = market_order_amt_buy(symbol, trade_amt, test)
                         total_trade += trade_amt
                         remaining_amount -= trade_amt                
             else:
                 if side == "sell":
-                    total_trade = market_order_amt_sell(symbol, amount)
+                    total_trade = market_order_amt_sell(symbol, amount, test)
                 else:
-                    total_trade = market_order_amt_buy(symbol, amount)
+                    total_trade = market_order_amt_buy(symbol, amount, test)
             return total_trade
         else:
             print(f"min notional amt: {min_notional} is larger the trade amount: {amount}, skipped trading")
@@ -201,7 +138,10 @@ def market_order_amt(symbol, side, amount):
         raise ValueError("Error making the trade request")
 
 
-def market_order_qty(symbol, side, qty):
+def market_order_qty(symbol, side, qty, test):
+    # Generate a binance client
+    client = get_client(test)
+
     symbol_info = client.get_symbol_info(symbol=symbol)
     # symbol_info_json = json.dumps(symbol_info, indent=2)
     # print(f"symbol info: {symbol_info_json}")
@@ -221,18 +161,18 @@ def market_order_qty(symbol, side, qty):
                     if max_qty_mkt > float(remaining_qty):
                         trade_qty = round(float(remaining_qty),precision)
                     if side == "sell":
-                        trade_amount = market_order_qty_sell(symbol, trade_qty)
+                        trade_amount = market_order_qty_sell(symbol, trade_qty, test)
                         total_trade += trade_amount
                         remaining_qty -= trade_amount
                     else:
-                        trade_amount = market_order_qty_buy(symbol, trade_qty)
+                        trade_amount = market_order_qty_buy(symbol, trade_qty, test)
                         total_trade += trade_amount
                         remaining_qty -= trade_amount                
             else:
                 if side == "sell":
-                    total_trade = market_order_qty_sell(symbol, qty)
+                    total_trade = market_order_qty_sell(symbol, qty, test)
                 else:
-                    total_trade = market_order_qty_buy(symbol, qty)
+                    total_trade = market_order_qty_buy(symbol, qty, test)
             return total_trade
         else:
             print("min qty is larger the trade quantity, skipped trading")
@@ -240,7 +180,10 @@ def market_order_qty(symbol, side, qty):
     except ValueError:
         return 0
 
-def market_order_amt_buy(symbol, amount):
+def market_order_amt_buy(symbol, amount, test):
+    # Generate a binance client
+    client = get_client(test)
+
     order = client.create_order(
             symbol=symbol,
             side=Client.SIDE_BUY,
@@ -250,7 +193,10 @@ def market_order_amt_buy(symbol, amount):
     order_amt = float(order['cummulativeQuoteQty'])
     return order_amt
 
-def market_order_qty_buy(symbol, quantity):
+def market_order_qty_buy(symbol, quantity, test):
+    # Generate a binance client
+    client = get_client(test)
+
     order = client.create_order(
             symbol=symbol,
             side=Client.SIDE_BUY,
@@ -261,7 +207,10 @@ def market_order_qty_buy(symbol, quantity):
     return order_amt
 
 
-def market_order_amt_sell(symbol, amount):
+def market_order_amt_sell(symbol, amount, test):
+    # Generate a binance client
+    client = get_client(test)
+
     order = client.create_order(
             symbol=symbol,
             side=Client.SIDE_SELL,
@@ -271,7 +220,10 @@ def market_order_amt_sell(symbol, amount):
     order_amt = float(order['cummulativeQuoteQty'])
     return order_amt
 
-def market_order_qty_sell(symbol, quantity):
+def market_order_qty_sell(symbol, quantity, test):
+    # Generate a binance client
+    client = get_client(test)
+
     order = client.create_order(
             symbol=symbol,
             side=Client.SIDE_SELL,

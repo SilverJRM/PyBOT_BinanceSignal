@@ -39,10 +39,10 @@ def get_balances():
     print(f"Total value in USD: {total_usd_value:.8f}")
 
 
-# ba.market_order_amt("TRXUSDT", "sell", 700)
-# ba.market_order_amt("BTCUSDT", "sell", 700)
-# ba.market_order_amt("ETHUSDT", "sell", 700)
-# cv.convert_assets(API_KEY, SECRET_KEY, "BNB", "USDT", 1000)
+ba.market_order_amt("TRXUSDT", "buy", 10314.96, "y")
+# ba.market_order_amt("BTCUSDT", "sell", 700, "y")
+# ba.market_order_amt("ETHUSDT", "sell", 700, "y")
+# cv.convert_assets(API_KEY, SECRET_KEY, "BNB", "USDT", 1000, "y")
 
 get_balances()
 
