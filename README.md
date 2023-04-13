@@ -10,6 +10,7 @@ Download and install IDE, Python & GIT (if you don't have yet):
 - VSCode [here](https://code.visualstudio.com/download)
 - Python [here](https://www.python.org/downloads/)
 - GIT [here](https://git-scm.com/downloads)
+- LibreOffice [here](https://www.libreoffice.org/download/download-libreoffice/)
 
 Create your API Keys:
 
