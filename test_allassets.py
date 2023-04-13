@@ -5,7 +5,6 @@ import os
 import json
 import helpful_scripts as hs
 import binance_api as ba
-import convert as cv
 
 # Load variables from .env file
 load_dotenv()
@@ -42,7 +41,6 @@ def get_balances():
 ba.market_order_amt("TRXUSDT", "buy", 10314.96, "y")
 # ba.market_order_amt("BTCUSDT", "sell", 700, "y")
 # ba.market_order_amt("ETHUSDT", "sell", 700, "y")
-# cv.convert_assets(API_KEY, SECRET_KEY, "BNB", "USDT", 1000, "y")
 
 get_balances()
 

@@ -1,0 +1,7 @@
+API_KEY=<insert live API_KEY>
+SECRET_KEY=<insert live SECRET_KEY>
+TEST_API_KEY=<insert live TESTNET_API_KEY>
+TEST_SECRET_KEY=<insert live TESTNET_SECRET_KEY>
+FILE_PATH=<insert folder location of file = 'C:\Users\xxxx\Desktop\Trading\Crypto_Signal.ods'>
+TEST_FILE_PATH=<insert folder location of file = 'C:\Users\xxxx\Desktop\Trading\Crypto_Signal_TEST.ods'>
+SHEET_NAME=NewTrade

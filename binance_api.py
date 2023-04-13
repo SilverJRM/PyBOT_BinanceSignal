@@ -77,6 +77,7 @@ def market_order_amt(symbol, side, amount, test):
     symbol_info = client.get_symbol_info(symbol=symbol)
     # symbol_info_json = json.dumps(symbol_info, indent=2)
     # print(f"symbol info: {symbol_info_json}")
+    # print(f"symbol: {symbol_info}")
 
     # Check if symbol info is None
     if symbol_info is None:
@@ -89,7 +90,7 @@ def market_order_amt(symbol, side, amount, test):
 
     filters = symbol_info['filters']
     for filter_dict in filters:
-        if filter_dict["filterType"] == "MIN_NOTIONAL":
+        if filter_dict["filterType"] == "MIN_NOTIONAL" or filter_dict["filterType"] == "NOTIONAL" :
             min_notional = float(filter_dict["minNotional"])
         if filter_dict["filterType"] == "LOT_SIZE":
             min_qty_lot = float(filter_dict['minQty'])
