@@ -6,9 +6,10 @@ Automate performing rebalancing of your assets on binance using LibreOffice Calc
 ## Install
 
 Download and install IDE, Python & GIT (if you don't have yet):
-VSCode [here](https://code.visualstudio.com/download)
-Python [here](https://www.python.org/downloads/)
-GIT [here](https://git-scm.com/downloads)
+
+- VSCode [here](https://code.visualstudio.com/download)
+- Python [here](https://www.python.org/downloads/)
+- GIT [here](https://git-scm.com/downloads)
 
 Create your API Keys:
 Testnet [here](https://testnet.binance.vision/)
@@ -34,7 +35,7 @@ Setup your env file:
 - Live API keys
 - Folder and file names
 - SheetName where allocations would be read
-  ![Screenshot](./src/assets/img/env_file.png)
+  ![Screenshot](./assets/img/env_file.png)
 
 Setup your allocation on your file:
 
@@ -44,7 +45,7 @@ Alloc (cons)/percent = Percent allocations for the Conservative Bucket
 Alloc (SS)/percent = Percent allocations for Small Speculative Bucket
 Alloc (Ex)/percent = Percent allocations for Experimental Bucket
 NewTrade = SheetName where the allocations is pulled from
-![Screenshot](./src/assets/img/allocations_setup.png)
+![Screenshot](./assets/img/allocations_setup.png)
 
 ## Run Scripts
 
@@ -75,10 +76,10 @@ py .\main.py --test n
 ## Screenshot
 
 When you run script it would produce a summary of trades to be done and you need to confirm before it is performed:
-![Screenshot](./src/assets/img/summary.png)
+![Screenshot](./assets/img/summary.png)
 
 After confirmation:
-![Screenshot](./src/assets/img/confirmed.png)
+![Screenshot](./assets/img/confirmed.png)
 
 ### Contribution
 
