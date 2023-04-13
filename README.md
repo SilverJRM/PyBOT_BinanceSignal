@@ -76,12 +76,14 @@ py .\main.py --test n
 ## Screenshot
 
 When you run script it would produce a summary of trades to be done and you need to confirm before it is performed:
+
 ![Screenshot](./assets/img/summary.png)
 
 After confirmation:
+
 ![Screenshot](./assets/img/confirmed.png)
 
-### Contribution
+## Contribution
 
 Suggestions and PRs are welcome!
 
