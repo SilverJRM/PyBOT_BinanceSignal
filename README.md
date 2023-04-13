@@ -12,8 +12,9 @@ Download and install IDE, Python & GIT (if you don't have yet):
 - GIT [here](https://git-scm.com/downloads)
 
 Create your API Keys:
-Testnet [here](https://testnet.binance.vision/)
-Live Binance Key [here](https://www.binance.com/en/my/settings/api-management)
+
+- Testnet [here](https://testnet.binance.vision/)
+- Live Binance Key [here](https://www.binance.com/en/my/settings/api-management)
 
 Clone the repository:
 
