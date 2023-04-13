@@ -39,13 +39,13 @@ Setup your env file:
 
 Setup your allocation on your file:
 
-Current holdings = All the assets you want to include in the rebalancing
-Allocations/Percent = Percent allocation for each bucket
-Alloc (cons)/percent = Percent allocations for the Conservative Bucket
-Alloc (SS)/percent = Percent allocations for Small Speculative Bucket
-Alloc (Ex)/percent = Percent allocations for Experimental Bucket
-NewTrade = SheetName where the allocations is pulled from
-![Screenshot](./assets/img/allocations_setup.png)
+- Current holdings = All the assets you want to include in the rebalancing
+- Allocations/Percent = Percent allocation for each bucket
+- Alloc (cons)/percent = Percent allocations for the Conservative Bucket
+- Alloc (SS)/percent = Percent allocations for Small Speculative Bucket
+- Alloc (Ex)/percent = Percent allocations for Experimental Bucket
+- NewTrade = SheetName where the allocations is pulled from
+  ![Screenshot](./assets/img/allocations_setup.png)
 
 ## Run Scripts
 
@@ -91,6 +91,6 @@ Please create issue or open PR request for contribution.
 
 If this script helped you out feel free to donate.
 
-BTC: bc1qx3nk39z8h3nuu03n4k6cazpss4hy6wl9vmd7w6
-ETH: 0x7Fe9cB61661fCccF112e2ECe93605e1A5D96d4C6
-ADA/Cardano: addr1qxnq7tgffqka5fmsphstmnkjzm485dx3sxhd0m4svx9gcx9xgr9y8ursyep05fs8p6067tut4485ak666lhkw5nn8l3seaad4u
+- BTC: bc1qx3nk39z8h3nuu03n4k6cazpss4hy6wl9vmd7w6
+- ETH: 0x7Fe9cB61661fCccF112e2ECe93605e1A5D96d4C6
+- ADA/Cardano: addr1qxnq7tgffqka5fmsphstmnkjzm485dx3sxhd0m4svx9gcx9xgr9y8ursyep05fs8p6067tut4485ak666lhkw5nn8l3seaad4u
