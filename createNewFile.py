@@ -4,7 +4,6 @@ import os
 import numpy as np
 
 def create_new_file(file_path, sheet_name, new_holdings):
-    # print("creating new file....")
     # Read data from input file
     df = pd.read_excel(file_path, sheet_name=sheet_name)
 
@@ -30,7 +29,6 @@ def create_new_file(file_path, sheet_name, new_holdings):
             else:
                 new_holdings_list.append(key.upper())
 
-
     # Replace holdings with new_holdings_list
     holdings = new_holdings_list
 
@@ -47,24 +45,44 @@ def create_new_file(file_path, sheet_name, new_holdings):
     old_file_name_without_ext, ext = os.path.splitext(old_file_name)
     new_file_name = f"{date_str}_{old_file_name_without_ext}{ext}"
     new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
-    
-    if os.path.exists(file_path):
-        overwrite = "y"
-        if overwrite == "y":
-            os.remove(file_path)
-        else:
-            counter = 1
-            while os.path.exists(new_file_path):
-                counter += 1
-                new_file_name = f"{date_str}_{old_file_name_without_ext}_{counter}{ext}"
-                new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
-            print(f"Creating new file: {new_file_name}")
-            file_path = new_file_path
 
+    if os.path.exists(new_file_path):
+        os.remove(new_file_path)
+
+    if os.path.exists(file_path):
+        # Move the old file to a new file with the date attached
+        os.rename(file_path, new_file_path)
+
+    with pd.ExcelFile(new_file_path) as old_file:
+        old_trade_df = pd.read_excel(old_file, sheet_name='NewTrade')
+
+    # Create a new file with the name of the old file and write data to it
     with pd.ExcelWriter(file_path) as writer:
-        df.to_excel(writer, sheet_name='OldTrade', index=False)
+        pd.DataFrame(old_trade_df).to_excel(writer, sheet_name='OldTrade', index=False)
         pd.DataFrame({'Current Holdings': holdings, 'Allocation': allocation,
                       'Percent': percent, 'Alloc [cons]': alloc_cons, 'c.Percent': c_percent,
                       'Alloc [SS]': alloc_ss, 'ss.Percent': ss_percent, 'Alloc [Ex]': alloc_ex,
                       'ex.Percent': ex_percent}).to_excel(writer, sheet_name='NewTrade', index=False)
-    print("new file created!!")
+
+    print(f"New file created: {file_path}")
+
+
+
+def revert_files(file_path):
+
+    date_str = datetime.datetime.now().strftime('%Y%m%d')
+    old_file_name = os.path.basename(file_path)
+    old_file_name_without_ext, ext = os.path.splitext(old_file_name)
+    new_file_name = f"{date_str}_{old_file_name_without_ext}{ext}"
+    new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
+
+    if os.path.exists(new_file_path) and os.path.exists(file_path):
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        if os.path.exists(new_file_path):
+            #revert the files back to old 
+            os.rename(new_file_path, file_path)
+        print("revert file completed!")
+    else:
+        print("nothing to revert..")

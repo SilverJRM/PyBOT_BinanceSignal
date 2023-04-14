@@ -42,3 +42,4 @@ venv.bak/
 convert.py
 live_test.py
 test
+jtest.py

@@ -7,16 +7,18 @@ import os
 
 # Load variables from .env file
 load_dotenv()
-SHEET_NAME = os.getenv("SHEET_NAME")
+
 
 def main(args):
     
     if args.test == "y":
         print("This run is using test environment!")
         FILE_PATH = os.getenv("TEST_FILE_PATH")
+        SHEET_NAME = os.getenv("TEST_SHEET_NAME")
     else:
         print("This is running on LIVE Environment!")
         FILE_PATH = os.getenv("FILE_PATH")
+        SHEET_NAME = os.getenv("SHEET_NAME")
 
 
     relabance_obj = hs.get_file_dtls(FILE_PATH, SHEET_NAME)

@@ -9,7 +9,7 @@ load_dotenv()
 FILE_PATH = os.getenv("TEST_FILE_PATH")
 #Legit
 # FILE_PATH = os.getenv("FILE_PATH")
-SHEET_NAME = os.getenv("SHEET_NAME")
+SHEET_NAME = os.getenv("TEST_SHEET_NAME")
 
 relabance_obj = hs.get_file_dtls(FILE_PATH, SHEET_NAME)
 print("======================================================================")

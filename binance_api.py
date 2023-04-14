@@ -8,17 +8,19 @@ import json
 
 # Load variables from .env file
 load_dotenv()
-SHEET_NAME = os.getenv("SHEET_NAME")
+
 
 def get_client(test):
     if test == "y":
         API_KEY = os.getenv("TEST_API_KEY")
         SECRET_KEY = os.getenv("TEST_SECRET_KEY")
         FILE_PATH = os.getenv("TEST_FILE_PATH")
+        SHEET_NAME = os.getenv("TEST_SHEET_NAME")
     else:
         API_KEY = os.getenv("API_KEY")
         SECRET_KEY = os.getenv("SECRET_KEY")
-        FILE_PATH = os.getenv("FILE_PATH")   
+        FILE_PATH = os.getenv("FILE_PATH")  
+        SHEET_NAME = os.getenv("SHEET_NAME") 
 
     # Replace YOUR_API_KEY and YOUR_SECRET_KEY with your actual API keys
     client = Client(api_key=API_KEY, api_secret=SECRET_KEY, testnet=True)   
