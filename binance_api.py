@@ -16,14 +16,14 @@ def get_client(test):
         SECRET_KEY = os.getenv("TEST_SECRET_KEY")
         FILE_PATH = os.getenv("TEST_FILE_PATH")
         SHEET_NAME = os.getenv("TEST_SHEET_NAME")
+        client = Client(api_key=API_KEY, api_secret=SECRET_KEY, testnet=True)   
     else:
         API_KEY = os.getenv("API_KEY")
         SECRET_KEY = os.getenv("SECRET_KEY")
         FILE_PATH = os.getenv("FILE_PATH")  
         SHEET_NAME = os.getenv("SHEET_NAME") 
+        client = Client(api_key=API_KEY, api_secret=SECRET_KEY)   
 
-    # Replace YOUR_API_KEY and YOUR_SECRET_KEY with your actual API keys
-    client = Client(api_key=API_KEY, api_secret=SECRET_KEY, testnet=True)   
     return client  
 
 def get_asset_balance(input_obj, test):

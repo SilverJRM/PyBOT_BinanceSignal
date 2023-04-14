@@ -38,7 +38,7 @@ def main(args):
             print("======================================================================")
             print(f"check valid: {relabance_obj}")
 
-        relabance_obj = ba.get_asset_balance(relabance_obj, "y")
+        relabance_obj = ba.get_asset_balance(relabance_obj, args.test)
         if args.logs == "y":
             print("======================================================================")
             print(f"asset_balance: {relabance_obj}")
@@ -63,7 +63,7 @@ def main(args):
         # print(f"moves: {trade_cont}")
 
         if trade_cont == "y":
-            hs.perform_trade_market(moves, "y")
+            hs.perform_trade_market(moves, args.test)
 
             cNF.create_new_file(FILE_PATH, SHEET_NAME, new_allocations)
             print("======================================================================")
