@@ -8,11 +8,11 @@ import binance_api as ba
 
 # Load variables from .env file
 load_dotenv()
-API_KEY = os.getenv("TEST_API_KEY")
-SECRET_KEY = os.getenv("TEST_SECRET_KEY")
+API_KEY = os.getenv("API_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # Replace YOUR_API_KEY and YOUR_SECRET_KEY with your actual API keys
-client = Client(api_key=API_KEY, api_secret=SECRET_KEY, testnet=True)
+client = Client(api_key=API_KEY, api_secret=SECRET_KEY)
 
 def get_balances():
     # Get USD prices for all coins
@@ -28,19 +28,20 @@ def get_balances():
         asset = balance['asset']
         free_balance = float(balance['free'])
         locked_balance = float(balance['locked'])
+
         if free_balance + locked_balance > 0:
-            if asset != 'BUSD' and asset != 'USDT':
-                usd_value = (free_balance + locked_balance) * usd_prices[f'{asset}BUSD']
-            else:
-                usd_value = free_balance + locked_balance
-            print(f"{asset} balance: {free_balance + locked_balance:.8f} - in USD: {usd_value:.8f}")
-            total_usd_value += usd_value
+            try:
+                if asset != 'BUSD' and asset != 'USDT':
+                    usd_value = (free_balance + locked_balance) * usd_prices[f'{asset}BUSD']
+                else:
+                    usd_value = free_balance + locked_balance
+                print(f"{asset} balance: {free_balance + locked_balance:.8f} - in USD: {usd_value:.8f}")
+                total_usd_value += usd_value
+            except KeyError:
+                print(f"{asset} has no StableCoin counterpart")
     print(f"Total value in USD: {total_usd_value:.8f}")
 
 
-# ba.market_order_amt("TRXUSDT", "buy", 10314.96, "y")
-# ba.market_order_amt("BTCUSDT", "sell", 700, "y")
-# ba.market_order_amt("ETHUSDT", "sell", 700, "y")
 
 get_balances()
 
