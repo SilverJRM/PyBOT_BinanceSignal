@@ -63,6 +63,12 @@ run script (test - hardcoded) on command line:
 py .\test_main.py
 ```
 
+run allassets script (live assets) on command line:
+
+```sh
+py .\allassets.py -all y
+```
+
 run main script (test mode) on command line:
 
 ```sh
