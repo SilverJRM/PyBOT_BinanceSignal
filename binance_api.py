@@ -72,7 +72,6 @@ def get_asset_balance(input_obj, test):
     return input_obj
 
 def market_order_amt(symbol, side, amount, test):
-    # print(f"tradepair: {symbol}")
     # Generate a binance client
     client = get_client(test)
 
@@ -149,7 +148,6 @@ def market_order_qty(symbol, side, qty, test):
     # symbol_info_json = json.dumps(symbol_info, indent=2)
     # print(f"symbol info: {symbol_info_json}")
     precision = 8
-    # print(f"precision: {precision}")
     max_qty_mkt = float(symbol_info['filters'][4]['maxQty'])
     max_qty_lot = float(symbol_info['filters'][1]['maxQty'])
     min_qty_lot = float(symbol_info['filters'][1]['minQty'])
